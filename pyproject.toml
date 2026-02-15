@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=64", "wheel"]
+build-backend = "setuptools.backends._legacy:_Backend"
+
+[project]
+name = "photonapi"
+version = "2.0.0"
+description = "The all-in-one Python framework built for AI developers. Ship ML models with auth, database, caching, and monitoring — zero dependencies."
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.9"
+authors = [
+    {name = "Ashmit", url = "https://github.com/ashmitrathod8080-hue"}
+]
+keywords = ["web-framework", "api", "ml", "machine-learning", "model-serving", "sse", "streaming"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
+    "Topic :: Software Development :: Libraries :: Application Frameworks",
+]
+
+[project.urls]
+Homepage = "https://github.com/ashmitrathod8080-hue/PhotonAPI"
+Repository = "https://github.com/ashmitrathod8080-hue/PhotonAPI"
+
+[project.optional-dependencies]
+passwords = ["bcrypt", "argon2-cffi"]
+redis = ["redis"]
+postgres = ["psycopg2-binary"]
+mysql = ["pymysql"]
+ml = ["scikit-learn", "onnxruntime", "torch", "tensorflow", "transformers"]
+
+[tool.setuptools.packages.find]
+include = ["photonapi*"]

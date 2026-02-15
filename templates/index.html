@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhotonAPI — Ship ML models. No assembly required.</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #0a0a0f;
+            --surface: #12121a;
+            --surface-2: #1a1a26;
+            --border: #1e1e2e;
+            --border-hover: #2e2e42;
+            --text: #e4e4ed;
+            --muted: #6e6e82;
+            --accent: #a78bfa;
+            --accent-hover: #8b6cf6;
+            --accent-dim: rgba(167, 139, 250, 0.08);
+            --accent-glow: rgba(167, 139, 250, 0.15);
+            --green: #34d399;
+            --green-dim: rgba(52, 211, 153, 0.08);
+            --blue: #60a5fa;
+            --blue-dim: rgba(96, 165, 250, 0.08);
+            --orange: #fbbf24;
+            --orange-dim: rgba(251, 191, 36, 0.08);
+            --red: #f87171;
+            --red-dim: rgba(248, 113, 113, 0.08);
+            --cyan: #22d3ee;
+            --cyan-dim: rgba(34, 211, 238, 0.08);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 120px 20px 80px;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -200px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(167,139,250,0.06) 0%, transparent 60%);
+            pointer-events: none;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            background: var(--accent-dim);
+            border: 1px solid rgba(167,139,250,0.15);
+            border-radius: 24px;
+            font-size: 13px;
+            color: var(--accent);
+            margin-bottom: 28px;
+            letter-spacing: 0.3px;
+        }
+
+        .hero-badge .pulse {
+            width: 6px;
+            height: 6px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .hero-name {
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+
+        .hero-name::before,
+        .hero-name::after {
+            content: '';
+            width: 32px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--accent));
+        }
+
+        .hero-name::after {
+            background: linear-gradient(90deg, var(--accent), transparent);
+        }
+
+        .hero h1 {
+            font-size: 60px;
+            font-weight: 800;
+            letter-spacing: -3px;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #fff 0%, #fff 40%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
+        }
+
+        .hero .subtitle {
+            font-size: 19px;
+            font-weight: 400;
+            color: var(--text);
+            opacity: 0.8;
+            margin-bottom: 24px;
+        }
+
+        .hero p {
+            font-size: 16px;
+            color: var(--muted);
+            max-width: 540px;
+            margin: 0 auto 12px;
+            line-height: 1.8;
+        }
+
+        .hero .sub-note {
+            font-size: 13px;
+            color: var(--muted);
+            opacity: 0.6;
+            margin-bottom: 40px;
+            font-style: italic;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: #0a0a0f;
+        }
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            box-shadow: 0 0 24px rgba(167, 139, 250, 0.3);
+        }
+        .btn-outline {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .btn-outline:hover {
+            border-color: var(--border-hover);
+            background: var(--surface);
+        }
+
+        .install-bar {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 14px 22px;
+            margin-top: 36px;
+            font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        .install-bar code { color: var(--green); }
+        .install-bar button {
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: color 0.2s;
+        }
+        .install-bar button:hover { color: var(--text); }
+
+        .stats {
+            display: flex;
+            gap: 48px;
+            justify-content: center;
+            padding: 60px 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat { text-align: center; }
+        .stat-value {
+            font-size: 40px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--text), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .stat-label {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .section {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 80px 24px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 56px;
+        }
+
+        .section-header h2 {
+            font-size: 40px;
+            font-weight: 700;
+            letter-spacing: -1.5px;
+            margin-bottom: 12px;
+        }
+
+        .section-header p {
+            color: var(--muted);
+            font-size: 17px;
+            max-width: 520px;
+            margin: 0 auto;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 14px;
+        }
+
+        .feature {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 28px;
+            transition: all 0.25s;
+        }
+
+        .feature:hover {
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .feature-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            margin-bottom: 18px;
+        }
+
+        .feature-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+
+        .feature h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .feature p {
+            font-size: 13.5px;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        .code-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 28px;
+            align-items: start;
+        }
+
+        @media (max-width: 768px) {
+            .code-section { grid-template-columns: 1fr; }
+            .hero-name { font-size: 12px; letter-spacing: 3px; }
+            .hero h1 { font-size: 36px; letter-spacing: -2px; }
+            .hero .subtitle { font-size: 16px; }
+            .features { grid-template-columns: 1fr; }
+            .stats { gap: 32px; }
+        }
+
+        .code-block {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .code-block-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 18px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .code-block-header .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .code-block pre {
+            padding: 22px;
+            overflow-x: auto;
+            font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .code-info { padding: 8px 0; }
+        .code-info h3 { font-size: 24px; font-weight: 700; margin-bottom: 14px; letter-spacing: -0.5px; }
+        .code-info p { color: var(--muted); font-size: 15px; line-height: 1.7; margin-bottom: 18px; }
+        .code-info ul { list-style: none; padding: 0; }
+        .code-info ul li { padding: 5px 0; font-size: 14px; color: var(--muted); }
+        .code-info ul li::before { content: '→'; color: var(--accent); margin-right: 10px; font-weight: 600; }
+
+        .try-section {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            padding: 44px;
+            margin-top: 20px;
+        }
+
+        .endpoints {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 10px;
+            margin-top: 28px;
+        }
+
+        .endpoint {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 18px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            color: var(--text);
+        }
+
+        .endpoint:hover {
+            border-color: var(--border-hover);
+            background: var(--accent-dim);
+        }
+
+        .method {
+            font-family: 'SF Mono', monospace;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 5px;
+            letter-spacing: 0.5px;
+            min-width: 52px;
+            text-align: center;
+        }
+
+        .method-get { background: var(--green-dim); color: var(--green); }
+        .method-post { background: var(--blue-dim); color: var(--blue); }
+        .endpoint-path { font-family: 'SF Mono', monospace; font-size: 13px; color: var(--muted); }
+        .endpoint-desc { font-size: 12px; color: var(--muted); margin-left: auto; opacity: 0.5; }
+
+        .arch-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 8px;
+            margin-top: 32px;
+        }
+
+        .arch-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 18px 16px;
+            text-align: center;
+            transition: border-color 0.2s;
+        }
+
+        .arch-item:hover { border-color: var(--border-hover); }
+        .arch-item .name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+        .arch-item .desc { font-size: 11px; color: var(--muted); }
+
+        .sse-demo {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 36px;
+            margin-top: 24px;
+        }
+
+        .sse-output {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 18px;
+            min-height: 70px;
+            font-family: 'SF Mono', monospace;
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--green);
+            margin-top: 18px;
+            white-space: pre-wrap;
+        }
+
+        .sse-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .sse-controls input {
+            flex: 1;
+            min-width: 200px;
+            padding: 11px 18px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .sse-controls input:focus { border-color: var(--accent); }
+
+        .divider {
+            height: 1px;
+            background: var(--border);
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .value-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-top: 40px;
+        }
+
+        .value-card {
+            text-align: center;
+            padding: 32px 24px;
+        }
+
+        .value-card h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .value-card p {
+            font-size: 14px;
+            color: var(--muted);
+            line-height: 1.7;
+        }
+
+        footer {
+            text-align: center;
+            padding: 48px 20px 64px;
+            border-top: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 13px;
+        }
+        footer a { color: var(--accent); text-decoration: none; }
+
+        .kw { color: #ff7b72; }
+        .fn { color: #d2a8ff; }
+        .str { color: #a5d6ff; }
+        .dec { color: #79c0ff; }
+        .cmt { color: #484f58; }
+        .par { color: #ffa657; }
+        .num { color: #79c0ff; }
+    </style>
+</head>
+<body>
+
+<div class="hero">
+    <div class="hero-badge">
+        <span class="pulse"></span>
+        Built for AI developers — zero dependencies
+    </div>
+    <div class="hero-name">⚡ PhotonAPI</div>
+    <h1>Ship ML models.<br>No assembly required.</h1>
+    <div class="subtitle">The all-in-one Python framework built for AI developers.</div>
+    <p>Get auth, database, model serving, caching, and monitoring out of the box — no configuration needed.</p>
+    <div class="sub-note">Go from notebook to live API before your coffee gets cold.</div>
+    <div class="hero-actions">
+        <a href="#code" class="btn btn-primary">Get Started in 60s</a>
+        <a href="#try-it" class="btn btn-outline">Live Demo</a>
+        <a href="https://github.com/ashmitrathod8080-hue" class="btn btn-outline">GitHub</a>
+    </div>
+    <div class="install-bar">
+        <span>$</span>
+        <code>python example.py</code>
+        <button onclick="navigator.clipboard.writeText('python example.py')" title="Copy">📋</button>
+    </div>
+</div>
+
+<div class="stats">
+    <div class="stat">
+        <div class="stat-value">0</div>
+        <div class="stat-label">Dependencies</div>
+    </div>
+    <div class="stat">
+        <div class="stat-value">60s</div>
+        <div class="stat-label">To first API</div>
+    </div>
+    <div class="stat">
+        <div class="stat-value">25</div>
+        <div class="stat-label">Modules</div>
+    </div>
+    <div class="stat">
+        <div class="stat-value">120+</div>
+        <div class="stat-label">Exports</div>
+    </div>
+</div>
+
+<div class="section">
+    <div class="section-header">
+        <h2>Stop gluing packages together</h2>
+        <p>Most frameworks make you install 15 packages to serve a model. PhotonAPI ships everything in one import.</p>
+    </div>
+    <div class="value-grid">
+        <div class="value-card">
+            <h3>Zero dependencies</h3>
+            <p>Runs on the Python standard library. Nothing to install, nothing to break, nothing to conflict with your ML stack.</p>
+        </div>
+        <div class="value-card">
+            <h3>AI-first design</h3>
+            <p>Model registry, batch prediction, A/B testing, drift detection, LLM streaming — built in from day one.</p>
+        </div>
+        <div class="value-card">
+            <h3>Built to scale</h3>
+            <p>JWT auth, rate limiting, circuit breakers, health checks, Prometheus metrics, distributed tracing. This isn't a toy.</p>
+        </div>
+        <div class="value-card">
+            <h3>Unreasonably fast</h3>
+            <p>Go from idea to deployed API in minutes. One file, one command, done. Perfect for demos and prototypes.</p>
+        </div>
+    </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section">
+    <div class="section-header">
+        <h2>Everything you need, built in</h2>
+        <p>No external packages, no configuration hell.</p>
+    </div>
+    <div class="features">
+        <div class="feature">
+            <div class="feature-icon" style="background: var(--blue-dim);">🧠</div>
+            <div class="feature-tag" style="background: var(--blue-dim); color: var(--blue);">AI/ML</div>
+            <h3>ML Model Serving</h3>
+            <p>Model registry with auto endpoints. Batch prediction, A/B testing, hot-swapping, drift detection, LRU caching. Loads sklearn, ONNX, PyTorch, TensorFlow, HuggingFace.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon" style="background: var(--cyan-dim);">📡</div>
+            <div class="feature-tag" style="background: var(--cyan-dim); color: var(--cyan);">Realtime</div>
+            <h3>LLM Streaming & SSE</h3>
+            <p>Stream tokens like ChatGPT with Server-Sent Events. EventBus pub/sub, chunked responses, file streaming — all with a generator function.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon" style="background: var(--accent-dim);">🔐</div>
+            <div class="feature-tag" style="background: var(--red-dim); color: var(--red);">Security</div>
+            <h3>Authentication</h3>
+            <p>JWT (HS256), OAuth2, API keys, sessions, password hashing with bcrypt/argon2/PBKDF2 fallback. CSRF protection & input sanitization.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon" style="background: var(--green-dim);">🗄️</div>
+            <div class="feature-tag" style="background: var(--green-dim); color: var(--green);">Data</div>
+            <h3>Database ORM</h3>
+            <p>SQLite, PostgreSQL, MySQL. Connection pooling, foreign keys, indexes, migrations, transactions, auto CRUD generation.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon" style="background: var(--orange-dim);">⚡</div>
+            <div class="feature-tag" style="background: var(--orange-dim); color: var(--orange);">Performance</div>
+            <h3>Caching & Rate Limiting</h3>
+            <p>LRU cache with TTL, Redis cache, tiered caching. Sliding window, token bucket, fixed window rate limiting.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon" style="background: var(--red-dim);">📊</div>
+            <div class="feature-tag" style="background: var(--accent-dim); color: var(--accent);">Ops</div>
+            <h3>Monitoring & Tracing</h3>
+            <p>Prometheus metrics, health checks (live/ready/startup), distributed tracing with W3C Traceparent, Jaeger & Zipkin exporters.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon" style="background: var(--accent-dim);">🛡️</div>
+            <div class="feature-tag" style="background: var(--red-dim); color: var(--red);">Resilience</div>
+            <h3>Error Handling</h3>
+            <p>Structured errors, circuit breaker pattern, retry with exponential backoff, request timeouts. Graceful shutdown with drain.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon" style="background: var(--green-dim);">✅</div>
+            <div class="feature-tag" style="background: var(--green-dim); color: var(--green);">Validation</div>
+            <h3>Schema Validation</h3>
+            <p>Type checking, coercion, nested objects, lists, regex, custom validators. Clean 422 errors with field-level messages.</p>
+        </div>
+        <div class="feature">
+            <div class="feature-icon" style="background: var(--blue-dim);">🔧</div>
+            <div class="feature-tag" style="background: var(--blue-dim); color: var(--blue);">DX</div>
+            <h3>Developer Tools</h3>
+            <p>CLI scaffolding, debug toolbar, hot reload, TestClient, auto API docs (Swagger), profiler, JSON/color logging.</p>
+        </div>
+    </div>
+</div>
+
+<div class="divider"></div>
+
+<div class="section" id="code">
+    <div class="section-header">
+        <h2>Deploy a model in 10 lines</h2>
+        <p>Register any ML model. Get predict, batch, health, and info endpoints automatically.</p>
+    </div>
+    <div class="code-section">
+        <div class="code-info">
+            <h3>Model serving, done right</h3>
+            <p>One decorator to go from trained model to live API. PhotonAPI handles routing, caching, monitoring, and batch inference for you.</p>
+            <ul>
+                <li>@models.register() — one decorator, full API</li>
+                <li>Auto predict, batch, health, info endpoints</li>
+                <li>LRU prediction caching</li>
+                <li>A/B testing between model versions</li>
+                <li>Drift detection & accuracy monitoring</li>
+                <li>sklearn, ONNX, PyTorch, TF, HuggingFace</li>
+            </ul>
+        </div>
+        <div class="code-block">
+            <div class="code-block-header">
+                <span class="dot" style="background:#ff5f57"></span>
+                <span class="dot" style="background:#febc2e"></span>
+                <span class="dot" style="background:#28c840"></span>
+                serve.py
+            </div>
+<pre><span class="kw">from</span> photonapi <span class="kw">import</span> <span class="fn">PhotonAPI</span>, <span class="fn">ModelRegistry</span>
+
+app = <span class="fn">PhotonAPI</span>()
+models = <span class="fn">ModelRegistry</span>(app, cache_size=<span class="num">500</span>)
+
+<span class="dec">@models.register</span>(<span class="str">"sentiment"</span>, version=<span class="str">"v1"</span>,
+                 cache=<span class="num">True</span>, monitor=<span class="num">True</span>)
+<span class="kw">class</span> <span class="fn">SentimentModel</span>:
+    <span class="kw">def</span> <span class="fn">predict</span>(<span class="par">self</span>, <span class="par">data</span>):
+        <span class="kw">return</span> {<span class="str">"label"</span>: <span class="str">"positive"</span>, <span class="str">"score"</span>: <span class="num">0.95</span>}
+
+    <span class="kw">def</span> <span class="fn">batch_predict</span>(<span class="par">self</span>, <span class="par">items</span>):
+        <span class="kw">return</span> [self.<span class="fn">predict</span>(i) <span class="kw">for</span> i <span class="kw">in</span> items]
+
+app.<span class="fn">run</span>()
+<span class="cmt"># That's it. You now have:</span>
+<span class="cmt"># POST /models/sentiment/predict</span>
+<span class="cmt"># POST /models/sentiment/batch</span>
+<span class="cmt"># GET  /models/sentiment/health</span>
+<span class="cmt"># GET  /models/sentiment/info</span></pre>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <div class="code-section">
+        <div class="code-block">
+            <div class="code-block-header">
+                <span class="dot" style="background:#ff5f57"></span>
+                <span class="dot" style="background:#febc2e"></span>
+                <span class="dot" style="background:#28c840"></span>
+                stream.py
+            </div>
+<pre><span class="kw">from</span> photonapi <span class="kw">import</span> <span class="fn">PhotonAPI</span>, <span class="fn">SSEResponse</span>, <span class="fn">sse_event</span>
+
+app = <span class="fn">PhotonAPI</span>()
+
+<span class="dec">@app.get</span>(<span class="str">"/chat"</span>)
+<span class="kw">def</span> <span class="fn">chat</span>(<span class="par">req</span>, <span class="par">res</span>):
+    <span class="kw">def</span> <span class="fn">generate</span>():
+        <span class="kw">for</span> token <span class="kw">in</span> my_llm(prompt):
+            <span class="kw">yield</span> <span class="fn">sse_event</span>({<span class="str">"token"</span>: token})
+        <span class="kw">yield</span> <span class="fn">sse_event</span>({<span class="str">"done"</span>: <span class="num">True</span>}, event=<span class="str">"done"</span>)
+    <span class="kw">return</span> <span class="fn">SSEResponse</span>(<span class="fn">generate</span>())
+
+app.<span class="fn">run</span>()</pre>
+        </div>
+        <div class="code-info">
+            <h3>Stream like ChatGPT</h3>
+            <p>Stream tokens to the client in real-time with Server-Sent Events. Same pattern OpenAI uses. Works with any generator.</p>
+            <ul>
+                <li>SSEResponse for real-time streaming</li>
+                <li>EventBus for pub/sub patterns</li>
+                <li>ChunkedResponse for large payloads</li>
+                <li>Works with any LLM or data source</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <div class="code-section">
+        <div class="code-info">
+            <h3>Full-stack in one file</h3>
+            <p>Auth, database, CRUD — everything your API needs alongside your model. No separate services, no microservice overhead.</p>
+            <ul>
+                <li>JWT auth with one decorator</li>
+                <li>SQLite ORM with auto CRUD</li>
+                <li>bcrypt / argon2 / PBKDF2 password hashing</li>
+                <li>auto_crud() for instant REST APIs</li>
+                <li>PostgreSQL and MySQL supported too</li>
+            </ul>
+        </div>
+        <div class="code-block">
+            <div class="code-block-header">
+                <span class="dot" style="background:#ff5f57"></span>
+                <span class="dot" style="background:#febc2e"></span>
+                <span class="dot" style="background:#28c840"></span>
+                app.py
+            </div>
+<pre><span class="kw">from</span> photonapi <span class="kw">import</span> (<span class="fn">PhotonAPI</span>, <span class="fn">JWT</span>,
+    <span class="fn">PasswordHasher</span>, <span class="fn">require_auth</span>,
+    <span class="fn">auto_crud</span>, <span class="fn">ForeignKey</span>)
+
+app = <span class="fn">PhotonAPI</span>()
+jwt = <span class="fn">JWT</span>(secret_key=<span class="str">"secret"</span>, expiry=<span class="num">3600</span>)
+db = app.<span class="fn">init_db</span>(<span class="str">"app.db"</span>)
+
+User = db.<span class="fn">model</span>(<span class="str">"users"</span>, email=<span class="par">str</span>, pw=<span class="par">str</span>)
+Post = db.<span class="fn">model</span>(<span class="str">"posts"</span>, title=<span class="par">str</span>,
+    author_id=<span class="fn">ForeignKey</span>(<span class="str">"users"</span>))
+
+<span class="fn">auto_crud</span>(app, Post, prefix=<span class="str">"/api/posts"</span>)
+
+<span class="dec">@app.post</span>(<span class="str">"/register"</span>)
+<span class="kw">def</span> <span class="fn">register</span>(<span class="par">req</span>, <span class="par">res</span>):
+    token = jwt.<span class="fn">encode</span>({<span class="str">"id"</span>: <span class="num">1</span>})
+    <span class="kw">return</span> {<span class="str">"token"</span>: token}, <span class="num">201</span>
+
+<span class="dec">@app.get</span>(<span class="str">"/me"</span>)
+<span class="dec">@require_auth</span>(jwt)
+<span class="kw">def</span> <span class="fn">me</span>(<span class="par">req</span>, <span class="par">res</span>):
+    <span class="kw">return</span> {<span class="str">"user"</span>: req.user}</pre>
+        </div>
+    </div>
+</div>
+
+<div class="section" id="try-it">
+    <div class="try-section">
+        <div class="section-header" style="margin-bottom: 28px;">
+            <h2>Try it live</h2>
+            <p>These endpoints are running on this server right now. Click any to see the response.</p>
+        </div>
+        <div class="endpoints">
+            <a class="endpoint" href="/docs" target="_blank">
+                <span class="method method-get">GET</span>
+                <span class="endpoint-path">/docs</span>
+                <span class="endpoint-desc">Swagger UI</span>
+            </a>
+            <a class="endpoint" href="/openapi.json" target="_blank">
+                <span class="method method-get">GET</span>
+                <span class="endpoint-path">/openapi.json</span>
+                <span class="endpoint-desc">OpenAPI Spec</span>
+            </a>
+            <a class="endpoint" href="/ping" target="_blank">
+                <span class="method method-get">GET</span>
+                <span class="endpoint-path">/ping</span>
+                <span class="endpoint-desc">Health Ping</span>
+            </a>
+            <a class="endpoint" href="/health/live" target="_blank">
+                <span class="method method-get">GET</span>
+                <span class="endpoint-path">/health/live</span>
+                <span class="endpoint-desc">Liveness</span>
+            </a>
+            <a class="endpoint" href="/health/ready" target="_blank">
+                <span class="method method-get">GET</span>
+                <span class="endpoint-path">/health/ready</span>
+                <span class="endpoint-desc">Readiness</span>
+            </a>
+            <a class="endpoint" href="/models" target="_blank">
+                <span class="method method-get">GET</span>
+                <span class="endpoint-path">/models</span>
+                <span class="endpoint-desc">ML Models</span>
+            </a>
+            <a class="endpoint" href="/models/sentiment/info" target="_blank">
+                <span class="method method-get">GET</span>
+                <span class="endpoint-path">/models/sentiment/info</span>
+                <span class="endpoint-desc">Model Info</span>
+            </a>
+            <a class="endpoint" href="/api/posts" target="_blank">
+                <span class="method method-get">GET</span>
+                <span class="endpoint-path">/api/posts</span>
+                <span class="endpoint-desc">Auto CRUD</span>
+            </a>
+            <a class="endpoint" href="/api/data" target="_blank">
+                <span class="method method-get">GET</span>
+                <span class="endpoint-path">/api/data</span>
+                <span class="endpoint-desc">Rate Limited</span>
+            </a>
+            <a class="endpoint" href="/metrics" target="_blank">
+                <span class="method method-get">GET</span>
+                <span class="endpoint-path">/metrics</span>
+                <span class="endpoint-desc">Prometheus</span>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="section" id="stream-demo">
+    <div class="sse-demo">
+        <div class="section-header" style="margin-bottom: 18px;">
+            <h2>Live Streaming Demo</h2>
+            <p>Watch tokens stream in real-time via Server-Sent Events — same pattern as ChatGPT.</p>
+        </div>
+        <div class="sse-controls">
+            <input type="text" id="sse-prompt" placeholder="Enter a prompt..." value="Tell me about PhotonAPI">
+            <button class="btn btn-primary" onclick="startStream()">Stream →</button>
+        </div>
+        <div class="sse-output" id="sse-output">Click "Stream →" to see live SSE output...</div>
+    </div>
+</div>
+
+<div class="section">
+    <div class="section-header">
+        <h2>25 modules. Zero dependencies.</h2>
+        <p>Every module runs on the Python standard library. Add optional packages only when you need them.</p>
+    </div>
+    <div class="arch-grid">
+        <div class="arch-item">
+            <div class="name">ml.py</div>
+            <div class="desc">Model serving</div>
+        </div>
+        <div class="arch-item">
+            <div class="name">streaming.py</div>
+            <div class="desc">SSE & EventBus</div>
+        </div>
+        <div class="arch-item">
+            <div class="name">auth.py</div>
+            <div class="desc">JWT, OAuth2, sessions</div>
+        </div>
+        <div class="arch-item">
+            <div class="name">database.py</div>
+            <div class="desc">ORM & pooling</div>
+        </div>
+        <div class="arch-item">
+            <div class="name">validation.py</div>
+            <div class="desc">Schema validation</div>
+        </div>
+        <div class="arch-item">
+            <div class="name">cache.py</div>
+            <div class="desc">LRU & Redis</div>
+        </div>
+        <div class="arch-item">
+            <div class="name">limiter.py</div>
+            <div class="desc">Rate limiting</div>
+        </div>
+        <div class="arch-item">
+            <div class="name">monitoring.py</div>
+            <div class="desc">Metrics & health</div>
+        </div>
+        <div class="arch-item">
+            <div class="name">tracing.py</div>
+            <div class="desc">Distributed tracing</div>
+        </div>
+        <div class="arch-item">
+            <div class="name">errors.py</div>
+            <div class="desc">Circuit breaker</div>
+        </div>
+        <div class="arch-item">
+            <div class="name">middleware.py</div>
+            <div class="desc">CORS, gzip, etc</div>
+        </div>
+        <div class="arch-item">
+            <div class="name">app.py</div>
+            <div class="desc">Core & server</div>
+        </div>
+        <div class="arch-item">
+            <div class="name">tasks.py</div>
+            <div class="desc">Background jobs</div>
+        </div>
+        <div class="arch-item">
+            <div class="name">openapi.py</div>
+            <div class="desc">OpenAPI 3.1</div>
+        </div>
+        <div class="arch-item">
+            <div class="name">testing.py</div>
+            <div class="desc">TestClient</div>
+        </div>
+        <div class="arch-item">
+            <div class="name">cli.py</div>
+            <div class="desc">CLI scaffolding</div>
+        </div>
+        <div class="arch-item">
+            <div class="name">logging_ext.py</div>
+            <div class="desc">JSON & color logs</div>
+        </div>
+        <div class="arch-item">
+            <div class="name">profiler.py</div>
+            <div class="desc">Debug toolbar</div>
+        </div>
+        <div class="arch-item">
+            <div class="name">migration.py</div>
+            <div class="desc">DB migrations</div>
+        </div>
+        <div class="arch-item">
+            <div class="name">router.py</div>
+            <div class="desc">Routing & blueprints</div>
+        </div>
+    </div>
+</div>
+
+<div class="section">
+    <div class="section-header">
+        <h2>Built by Ashmit</h2>
+        <p style="margin-top: 16px;">
+            <a href="https://github.com/ashmitrathod8080-hue" target="_blank" class="btn btn-outline" style="display: inline-flex; align-items: center; gap: 8px;">
+                <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                @ashmitrathod8080-hue
+            </a>
+        </p>
+    </div>
+</div>
+
+<footer>
+    <p>PhotonAPI — Ship ML models. No assembly required. — Built by <a href="https://github.com/ashmitrathod8080-hue">Ashmit</a></p>
+</footer>
+
+<script>
+function startStream() {
+    const output = document.getElementById('sse-output');
+    const prompt = document.getElementById('sse-prompt').value;
+    output.textContent = '';
+
+    const source = new EventSource('/api/stream?prompt=' + encodeURIComponent(prompt));
+
+    source.onmessage = function(e) {
+        try {
+            const data = JSON.parse(e.data);
+            if (data.token) output.textContent += data.token;
+        } catch(err) {}
+    };
+
+    source.addEventListener('done', function(e) {
+        try {
+            const data = JSON.parse(e.data);
+            output.textContent += '\n\n✓ Stream complete (' + data.total_tokens + ' tokens)';
+        } catch(err) {}
+        source.close();
+    });
+
+    source.onerror = function() { source.close(); };
+}
+</script>
+
+</body>
+</html>
