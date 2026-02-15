@@ -7,7 +7,7 @@ The all-in-one Python framework built for AI developers. Get auth, database, mod
 Go from notebook to live API before your coffee gets cold.
 
 # Try now (no install needed)
-git clone https://github.com/yourusername/photonapi
+git clone https://github.com/ashmitrathod8080-hue/PhotonAPI.git
 python examples/quickstart.py
 
 # Install from PyPI (coming soon)
