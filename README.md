@@ -443,6 +443,7 @@ PhotonAPI is great for prototypes and MVPs, but might not be right if you need:
 - ❌ 10+ years of plugin ecosystem
 
 **Good fit:** AI startups, hackathons, students, solo devs, data scientists
+
 **Not yet:** Large enterprises, mission-critical systems
 
 ---
