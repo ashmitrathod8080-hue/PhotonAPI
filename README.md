@@ -6,10 +6,12 @@ The all-in-one Python framework built for AI developers. Get auth, database, mod
 
 Go from notebook to live API before your coffee gets cold.
 
-```
-pip install photonapi   # coming soon
-python example.py       # try it now
-```
+# Try now (no install needed)
+git clone https://github.com/yourusername/photonapi
+python examples/quickstart.py
+
+# Install from PyPI (coming soon)
+pip install photonapi
 
 ---
 
