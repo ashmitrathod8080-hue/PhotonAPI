@@ -417,6 +417,36 @@ python -m photonapi test           # run tests
 
 ---
 
+## PhotonAPI vs. Other Frameworks
+
+| Feature            | PhotonAPI       | FastAPI         | Django          | Flask           |
+|--------------------|-----------------|-----------------|-----------------|-----------------|
+| **Setup time**     | 60 seconds      | ~10 minutes     | ~30 minutes     | ~5 minutes      |
+| **Dependencies**   | 0               | 10+             | 20+             | 2+              |
+| **ML serving**     | ✅ Built-in     | ⚠️ Manual       | ⚠️ Manual       | ⚠️ Manual       |
+| **Auth**           | ✅ Built-in     | ⚠️ Manual       | ✅ Built-in     | ⚠️ Manual       |
+| **ORM**            | ✅ Built-in     | ❌ None         | ✅ Built-in     | ❌ None         |
+| **SSE streaming**  | ✅ Built-in     | ✅ Supported    | ⚠️ Manual       | ⚠️ Manual       |
+| **Rate limiting**  | ✅ Built-in     | ⚠️ Manual       | ⚠️ Manual       | ⚠️ Manual       |
+| **OpenAPI docs**   | ✅ Auto         | ✅ Auto         | ⚠️ Manual       | ⚠️ Manual       |
+| **Best for**       | ML MVPs         | Production APIs | Full apps       | Prototypes      |
+
+---
+
+## ⚠️ When NOT to use PhotonAPI
+
+PhotonAPI is great for prototypes and MVPs, but might not be right if you need:
+
+- ❌ Team already expert in Django/FastAPI
+- ❌ Regulatory compliance (HIPAA, SOC2) out of the box
+- ❌ Millions of requests per second
+- ❌ 10+ years of plugin ecosystem
+
+**Good fit:** AI startups, hackathons, students, solo devs, data scientists
+**Not yet:** Large enterprises, mission-critical systems
+
+---
+
 ## Architecture
 
 25 modules. 8000+ lines. 120+ exports. Zero dependencies.
