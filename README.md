@@ -44,7 +44,7 @@ Most Python frameworks make you glue together 15 packages just to serve a model 
 
 **AI-first.** Model registry, batch prediction, A/B testing, drift detection, LLM streaming — built in from day one.
 
-**Built to scale.** JWT auth, rate limiting, circuit breakers, health checks, Prometheus metrics, distributed tracing. This isn't a toy.
+**Built to scale.** JWT auth, rate limiting, circuit breakers, health checks, Prometheus metrics and distributed tracing. 
 
 **Unreasonably fast to build with.** Go from idea to deployed API in minutes. One file, one command, done.
 
